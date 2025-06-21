@@ -1,0 +1,14 @@
+name: hellow world deployment
+
+on:
+    push:
+
+jobs:
+    hellow-world:
+      runs-on: self-hosted
+      steps:
+        - name: hellow world!!
+          run: |
+            echo "hellow world"
+            pwd
+            ls -a
