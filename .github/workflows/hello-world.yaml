@@ -1,14 +1,22 @@
-name: hellow world deployment
+name: Hello World Deployment
 
 on:
-    push:
+  push:
 
 jobs:
-    hellow-world:
-      runs-on: self-hosted
-      steps:
-        - name: hellow world!!
-          run: |
-            echo "hellow world"
-            pwd
-            ls -a
+  check-slack:
+    runs-on: self-hosted
+    # env:
+    #   release_tag: backend-service:v1.0.0
+    #   ecr_repo_name: sample-repo
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Notify Build Started
+        uses: ./.github/actions/slack-build-start
+        with:
+          slack_token: ${{ secrets.SLACK_BOT_TOKEN }}
+          channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
+          image_tag: ${{ env.release_tag }}
+          repository: ${{ env.ecr_repo_name }}
