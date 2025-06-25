@@ -18,5 +18,5 @@ jobs:
         with:
           slack_token: ${{ secrets.SLACK_BOT_TOKEN }}
           channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
-          image_tag: ${{ env.release_tag }}
-          repository: ${{ env.ecr_repo_name }}
+          image_tag: ${{ vars.RELEASE_TAG }}
+          repository: ${{ vars.ECR_REPO_NAME }}
