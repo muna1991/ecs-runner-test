@@ -21,6 +21,14 @@ jobs:
           image_tag: ${{ vars.RELEASE_TAG }}
           repository: ${{ vars.ECR_REPO_NAME }}
       - name: Docker image build start
+        id: docker
         run: |
           docker image build -t new-test:v1 .
-          
+      - name: Notify Build Completed
+        if: steps.docker.outcome == 'success'
+        uses: ./.github/actions/slack-build-complete
+        with:
+            slack_token: ${{ secrets.SLACK_BOT_TOKEN }}
+            channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
+            image_tag: ${{ vars.RELEASE_TAG }}
+            repository: ${{ vars.ECR_REPO_NAME }}
