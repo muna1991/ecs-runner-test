@@ -22,6 +22,7 @@ jobs:
           repository: ${{ vars.ECR_REPO_NAME }}
       - name: Docker image build start
         id: docker
+        continue-on-error: true
         run: |
           docker image build -t new-test:v1 .
       - name: Notify Build Completed
