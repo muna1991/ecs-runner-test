@@ -4,7 +4,7 @@ on:
   push:
 
 jobs:
-  check-slack:
+  build-job:
     runs-on: self-hosted
     # env:
     #   release_tag: backend-service:v1.0.0
