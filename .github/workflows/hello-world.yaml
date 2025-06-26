@@ -6,42 +6,45 @@ on:
 jobs:
   build-job:
     runs-on: self-hosted
-    container:
-      image: node:20.3-alpine3.17
-    steps:
-      - name: check log of node
-        run: |
-          node -v
-          
+    # container:
+    #   image: node:20.3-alpine3.17
     # steps:
-    #   - name: Checkout code
-    #     uses: actions/checkout@v4
-
-    #   - name: Notify Build Started
-    #     uses: ./.github/actions/slack-build-start
-    #     with:
-    #       slack_token: ${{ secrets.SLACK_BOT_TOKEN }}
-    #       channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
-    #       image_tag: ${{ vars.RELEASE_TAG }}
-    #       repository: ${{ vars.ECR_REPO_NAME }}
-    #   - name: Docker image build start
-    #     id: docker
-    #     continue-on-error: true
+    #   - name: check log of node
     #     run: |
-    #       docker image build -t new-test:v1 .
-    #   - name: Notify Build Completed
-    #     if: steps.docker.outcome == 'success'
-    #     uses: ./.github/actions/slack-build-complete
-    #     with:
-    #         slack_token: ${{ secrets.SLACK_BOT_TOKEN }}
-    #         channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
-    #         image_tag: ${{ vars.RELEASE_TAG }}
-    #         repository: ${{ vars.ECR_REPO_NAME }}
-    #   - name: Notify Build Failed
-    #     if: steps.docker.outcome == 'failure'
-    #     uses: ./.github/actions/slack-build-failed
-    #     with:
-    #         slack_token: ${{ secrets.SLACK_BOT_TOKEN }}
-    #         channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
-    #         image_tag: ${{ vars.RELEASE_TAG }}
-    #         repository: ${{ vars.ECR_REPO_NAME }}
+    #       node -v
+          
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Notify Build Started
+        uses: ./.github/actions/slack-build-start
+        with:
+          slack_token: ${{ secrets.SLACK_BOT_TOKEN }}
+          channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
+          image_tag: ${{ vars.RELEASE_TAG }}
+          repository: ${{ vars.ECR_REPO_NAME }}
+      - name: Docker image build start
+        id: docker
+        continue-on-error: true
+        run: |
+          docker image build -t new-test:v1 .
+      - name: Notify Build Completed
+        if: steps.docker.outcome == 'success'
+        uses: ./.github/actions/slack-build-complete
+        with:
+            slack_token: ${{ secrets.SLACK_BOT_TOKEN }}
+            channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
+            image_tag: ${{ vars.RELEASE_TAG }}
+            repository: ${{ vars.ECR_REPO_NAME }}
+      - name: scanning docker image by using snyk
+        run: |
+          snyk container monitor new-test:v1
+      - name: Notify Build Failed
+        if: steps.docker.outcome == 'failure'
+        uses: ./.github/actions/slack-build-failed
+        with:
+            slack_token: ${{ secrets.SLACK_BOT_TOKEN }}
+            channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
+            image_tag: ${{ vars.RELEASE_TAG }}
+            repository: ${{ vars.ECR_REPO_NAME }}
